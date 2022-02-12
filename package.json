@@ -1,0 +1,43 @@
+{
+	"name": "awesome-todo-maintainer",
+	"displayName": "Awesome Todo Maintainer",
+	"description": "Manage your Notion TO-DOs Database right from VSCode.",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.64.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:awesome-todo-maintainer.readTodos"
+	],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "awesome-todo-maintainer.readTodos",
+				"title": "Read TO-Dos"
+			}
+		]
+	},
+	"scripts": {
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "node ./test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.2.0",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "14.x",
+		"@types/vscode": "^1.64.0",
+		"@vscode/test-electron": "^2.0.3",
+		"eslint": "^8.6.0",
+		"glob": "^7.2.0",
+		"mocha": "^9.1.3",
+		"typescript": "^4.5.4"
+	},
+	"dependencies": {
+		"axios": "^0.25.0"
+	}
+}
