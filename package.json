@@ -32,6 +32,10 @@
 				"title": "Create TO-DOs"
 			},
 			{
+				"command": "awesome-todo-maintainer.updateTodos",
+				"title": "Update TO-DOs"
+			},
+			{
 				"command": "awesome-todo-maintainer.deleteTodos",
 				"title": "Delete TO-DOs"
 			}
