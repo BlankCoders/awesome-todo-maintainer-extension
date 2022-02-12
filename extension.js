@@ -1,112 +1,27 @@
 const vscode = require("vscode");
 const axios = require("axios");
 const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
-
-let errorPrompt = async () => {
-	let dbID = await getDbId();
-	if (dbID.length > 0) {
-		read(baseURL, dbID);
-	}
-	return dbID;
-};
-
-// let title = await vscode.window.showInputBox({
-// 	ignoreFocusOut: true,
-// 	prompt: `Enter your TODO title.`,
-// });
-// let priority = await vscode.window.showInputBox({
-// 	ignoreFocusOut: true,
-// 	prompt: `Enter your TODO title.`,
-// });
-// let status = await vscode.window.showInputBox({
-// 	ignoreFocusOut: true,
-// 	prompt: `Enter your TODO title.`,
-// });
-// let remarks = await vscode.window.showInputBox({
-// 	ignoreFocusOut: true,
-// 	prompt: `Enter your TODO title.`,
-// });
-
-// axios.post(`${baseURL}/create?databaseID=${dbID}`, {
-// 	firstName: 'Fred',
-// 	lastName: 'Flintstone'
-//   })
-//   .then(function (response) {
-// 	console.log(response);
-//   })
-//   .catch(function (error) {
-// 	console.log(error);
-//   });
-
-const create = async (baseURL, dbID) => {
-	let res = await axios.get(`${baseURL}/readTodo?databaseID=${dbID}`);
-	if (res.status !== 200) {
-		const message = "Service down.";
-		vscode.window.showInformationMessage(message);
-	}
-	let priorities = new Array();
-	res.data.map((ptodo) => {
-		priorities.push(ptodo.priority);
-	});
-
-	priorities = [...new Set(priorities)];
-	// console.log(priorities);
-
-	const ptodo = await vscode.window.showQuickPick(priorities, {
-		matchOnDescription: true,
-	});
-
-	if (ptodo) {
-		console.log(ptodo);
-	} else {
-		return;
-	}
-};
-
-const read = async (baseURL, dbID) => {
-	let res = await axios.get(`${baseURL}/readTodo?databaseID=${dbID}`);
-	if (res.data.success === "false" || !res.data.success) {
-		const message = "Database not found.";
-		vscode.window.showErrorMessage(message);
-		errorPrompt();
-		return;
-	}
-
-	const rtodos = res.data.results.map((rtodo) => {
-		return {
-			label: rtodo.title,
-			detail: `${rtodo.priority} - ${rtodo.status}`,
-			description: rtodo.remarks,
-			link: rtodo.url,
-		};
-	});
-
-	const rtodo = await vscode.window.showQuickPick(rtodos, {
-		matchOnDescription: true,
-	});
-
-	if (rtodo) {
-		vscode.env.openExternal(rtodo.link);
-	} else {
-		return;
-	}
-};
+let gDBID = null;
 
 const getDbId = async () => {
 	let dbID = await vscode.window.showInputBox({
 		ignoreFocusOut: true,
-		prompt: `Enter your NOTION Database URL. \n Eg.: https://www.notion.so/myworkspace/a8aec43384f447ed84390e8e42c2e089?v=...`,
+		prompt: `Enter your NOTION Database URL. Eg.: https://www.notion.so/myworkspace/a8aec43384f447ed84390e8e42c2e089?v=...`,
 	});
 
+	if (!dbID || dbID === "") {
+		return;
+	}
 	if (dbID.indexOf("?") === -1) {
 		dbID = dbID.slice(-32);
 	} else {
 		dbID = dbID.slice(dbID.indexOf("?") - 32, dbID.indexOf("?"));
 	}
-
-	console.log(dbID);
-
-	return dbID;
+	if (await check(baseURL, dbID)) {
+		gDBID = dbID;
+	} else {
+		await getDbId();
+	}
 };
 
 const check = async (baseURL, dbID) => {
@@ -114,11 +29,153 @@ const check = async (baseURL, dbID) => {
 	if (res.data.success === "false" || !res.data.success) {
 		const message = "Database not found.";
 		vscode.window.showErrorMessage(message);
-		dbID = await getDbId(baseURL);
+		return false;
 	}
 	const message = "Database added in workspace.";
 	vscode.window.showInformationMessage(message);
-	return dbID;
+	return true;
+};
+
+const create = async (baseURL, gDBID) => {
+	if (!gDBID) {
+		const message = "Database not found.";
+		vscode.window.showErrorMessage(message);
+		await getDbId();
+	} else {
+		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}`);
+
+		let title = await vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "Add a TO-DO title.",
+		});
+
+		let priority;
+		let status;
+		let priorities = new Array();
+		let statuses = new Array();
+		res.data.results.map((ptodo) => {
+			priorities.push(ptodo.priority);
+			statuses.push(ptodo.status);
+		});
+
+		priorities = [...new Set(priorities)];
+		statuses = [...new Set(statuses)];
+
+		const ptodo = await vscode.window.showQuickPick(priorities, {
+			matchOnDescription: true,
+			title: "Priority of TO-DO:",
+		});
+
+		if (ptodo) {
+			priority = ptodo;
+		} else {
+			return;
+		}
+
+		const stodo = await vscode.window.showQuickPick(statuses, {
+			matchOnDescription: true,
+			title: "Status of TO-DO:",
+		});
+
+		if (stodo) {
+			status = stodo;
+		} else {
+			return;
+		}
+
+		let remarks = await vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "Add remarks.",
+		});
+
+		let responseBe = {
+			title: title,
+			priority: priority,
+			status: status,
+			remarks: remarks,
+		};
+
+		axios
+			.post(`${baseURL}/createTodo?databaseID=${gDBID}`, responseBe)
+			.then(vscode.window.showInformationMessage("To-Do added."));
+	}
+};
+
+const read = async (baseURL, gDBID) => {
+	if (!gDBID) {
+		const message = "Database not found.";
+		vscode.window.showErrorMessage(message);
+		await getDbId();
+	} else {
+		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}`);
+
+		const rtodos = res.data.results.map((rtodo) => {
+			return {
+				label: rtodo.title,
+				detail: `${rtodo.priority} - ${rtodo.status}`,
+				description: rtodo.remarks,
+				link: rtodo.url,
+			};
+		});
+
+		const rtodo = await vscode.window.showQuickPick(rtodos, {
+			matchOnDescription: true,
+		});
+
+		if (rtodo) {
+			vscode.env.openExternal(rtodo.link);
+		} else {
+			return;
+		}
+	}
+};
+
+const deletes = async (baseURL, gDBID) => {
+	if (!gDBID) {
+		const message = "Database not found.";
+		vscode.window.showErrorMessage(message);
+		await getDbId();
+	} else {
+		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}`);
+
+		const rtodos = res.data.results.map((rtodo) => {
+			return {
+				label: rtodo.title,
+				detail: `${rtodo.priority} - ${rtodo.status}`,
+				description: rtodo.remarks,
+				pageID: rtodo.pageID,
+			};
+		});
+
+		const rtodo = await vscode.window.showQuickPick(rtodos, {
+			matchOnDescription: true,
+		});
+
+		if (rtodo) {
+			const data = JSON.stringify({
+				pageID: rtodo.pageID,
+			});
+
+			const config = {
+				method: "delete",
+				url: `${baseURL}/deleteTodo`,
+				headers: {
+					"Content-Type": "application/json",
+				},
+				data: data,
+			};
+
+			axios(config)
+				.then(function () {
+					vscode.window.showInformationMessage("To-Do deleted.");
+				})
+				.catch(function () {
+					vscode.window.showErrorMessage("Process failed.");
+				});
+		} else {
+			return;
+		}
+	}
 };
 
 /**
@@ -130,46 +187,46 @@ async function activate(context) {
 		'Congratulations, your extension "awesome-todo-maintainer" is now active!'
 	);
 
-	let dbID = await getDbId();
+	await getDbId();
 
 	let configureDb = vscode.commands.registerCommand(
 		"awesome-todo-maintainer.configureDB",
 		async function () {
-			dbID = await getDbId(baseURL);
+			await getDbId();
+		}
+	);
 
-			if (!dbID || dbID.length === 0) {
-				return;
-			}
-
-			if (dbID) {
-				dbID = await check(baseURL, dbID);
-			}
+	let readDb = vscode.commands.registerCommand(
+		"awesome-todo-maintainer.readDB",
+		function () {
+			vscode.window.showInformationMessage(
+				gDBID ? `Current database: ${gDBID}` : "No database found."
+			);
 		}
 	);
 
 	let readTodo = vscode.commands.registerCommand(
 		"awesome-todo-maintainer.readTodos",
 		async function () {
-			if (!dbID || dbID.length === 0) {
-				dbID = errorPrompt();
-			} else {
-				read(baseURL, dbID);
-			}
+			await read(baseURL, gDBID);
 		}
 	);
 
 	let createTodo = vscode.commands.registerCommand(
 		"awesome-todo-maintainer.createTodos",
 		async function () {
-			if (!dbID || dbID.length === 0) {
-				errorPrompt();
-			} else {
-				create(baseURL, dbID);
-			}
+			await create(baseURL, gDBID);
 		}
 	);
 
-	context.subscriptions.push(configureDb, readTodo, createTodo);
+	let deleteTodo = vscode.commands.registerCommand(
+		"awesome-todo-maintainer.deleteTodos",
+		async function () {
+			await deletes(baseURL, gDBID);
+		}
+	);
+
+	context.subscriptions.push(configureDb, readDb, readTodo, createTodo);
 }
 
 function deactivate() {}
