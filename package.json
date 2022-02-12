@@ -10,14 +10,22 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:awesome-todo-maintainer.readTodos"
+		"onStartupFinished"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
+				"command": "awesome-todo-maintainer.configureDB",
+				"title": "Add/Update Notion Database"
+			},
+			{
 				"command": "awesome-todo-maintainer.readTodos",
-				"title": "Read TO-Dos"
+				"title": "Read TO-DOs"
+			},
+			{
+				"command": "awesome-todo-maintainer.createTodos",
+				"title": "Create TO-DOs"
 			}
 		]
 	},
