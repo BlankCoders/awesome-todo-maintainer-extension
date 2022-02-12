@@ -2,6 +2,8 @@ const vscode = require("vscode");
 const axios = require("axios");
 const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
 let gDBID = null;
+const priorityList = ["Low👀", "Medium💻", "High🚀"]
+const statusList = ["Completed🚀", "In Progress💻", "Scheduled👀"]
 
 const getDbId = async () => {
 	let dbID = await vscode.window.showInputBox({
@@ -49,19 +51,19 @@ const create = async (baseURL, gDBID) => {
 			prompt: "Add a TO-DO title.",
 		});
 
-		let priority;
-		let status;
-		let priorities = new Array();
-		let statuses = new Array();
-		res.data.results.map((ptodo) => {
-			priorities.push(ptodo.priority);
-			statuses.push(ptodo.status);
-		});
+		// let priority;
+		// let status;
+		// let priorities = new Array();
+		// let statuses = new Array();
+		// res.data.results.map((ptodo) => {
+		// 	priorities.push(ptodo.priority);
+		// 	statuses.push(ptodo.status);
+		// });
 
-		priorities = [...new Set(priorities)];
-		statuses = [...new Set(statuses)];
+		// priorities = [...new Set(priorities)];
+		// statuses = [...new Set(statuses)];
 
-		const ptodo = await vscode.window.showQuickPick(priorities, {
+		const ptodo = await vscode.window.showQuickPick(priorityList, {
 			matchOnDescription: true,
 			title: "Priority of TO-DO:",
 		});
@@ -72,7 +74,7 @@ const create = async (baseURL, gDBID) => {
 			return;
 		}
 
-		const stodo = await vscode.window.showQuickPick(statuses, {
+		const stodo = await vscode.window.showQuickPick(statusList, {
 			matchOnDescription: true,
 			title: "Status of TO-DO:",
 		});
@@ -158,19 +160,19 @@ const update = async (baseURL, gDBID) => {
 				value: rtodo.label,
 			});
 
-			let priority;
-			let status;
-			let priorities = new Array();
-			let statuses = new Array();
-			res.data.results.map((ptodo) => {
-				priorities.push(ptodo.priority);
-				statuses.push(ptodo.status);
-			});
+			// let priority;
+			// let status;
+			// let priorities = new Array();
+			// let statuses = new Array();
+			// res.data.results.map((ptodo) => {
+			// 	priorities.push(ptodo.priority);
+			// 	statuses.push(ptodo.status);
+			// });
 
-			priorities = [...new Set(priorities)];
-			statuses = [...new Set(statuses)];
+			// priorities = [...new Set(priorities)];
+			// statuses = [...new Set(statuses)];
 
-			const ptodo = await vscode.window.showQuickPick(priorities, {
+			const ptodo = await vscode.window.showQuickPick(priorityList, {
 				matchOnDescription: true,
 				title: "Priority of TO-DO:",
 			});
@@ -181,7 +183,7 @@ const update = async (baseURL, gDBID) => {
 				return;
 			}
 
-			const stodo = await vscode.window.showQuickPick(statuses, {
+			const stodo = await vscode.window.showQuickPick(statusList, {
 				matchOnDescription: true,
 				title: "Status of TO-DO:",
 			});
@@ -341,7 +343,7 @@ async function activate(context) {
 	);
 }
 
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
 	activate,
