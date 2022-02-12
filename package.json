@@ -1,7 +1,7 @@
 {
 	"name": "awesome-todo-maintainer",
 	"displayName": "Awesome Todo Maintainer",
-	"description": "Manage your Notion TO-DOs Database right from VSCode.",
+	"description": "Awesome TO-DO Maintainer Extension for Awesome Hackers; powered by NotionAPI. Manage your Notion TO-DOs Database right from VSCode.",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.64.0"
