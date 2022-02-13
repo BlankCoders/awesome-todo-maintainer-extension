@@ -17,27 +17,27 @@
 		"commands": [
 			{
 				"command": "awesome-todo-maintainer.configureDB",
-				"title": "Add/Update Notion Database"
+				"title": "TODO: Add/Update Notion Database"
 			},
 			{
 				"command": "awesome-todo-maintainer.readDB",
-				"title": "Check Current Notion Database"
+				"title": "TODO: Check Current Notion Database"
 			},
 			{
 				"command": "awesome-todo-maintainer.readTodos",
-				"title": "Read TO-DOs"
+				"title": "TODO: Read TO-DOs"
 			},
 			{
 				"command": "awesome-todo-maintainer.createTodos",
-				"title": "Create TO-DOs"
+				"title": "TODO: Create TO-DOs"
 			},
 			{
 				"command": "awesome-todo-maintainer.updateTodos",
-				"title": "Update TO-DOs"
+				"title": "TODO: Update TO-DOs"
 			},
 			{
 				"command": "awesome-todo-maintainer.deleteTodos",
-				"title": "Delete TO-DOs"
+				"title": "TODO: Delete TO-DOs"
 			}
 		]
 	},
