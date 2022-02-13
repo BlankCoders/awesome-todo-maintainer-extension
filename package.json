@@ -2,6 +2,11 @@
 	"name": "awesome-todo-maintainer",
 	"displayName": "Awesome Todo Maintainer",
 	"description": "Awesome TO-DO Maintainer Extension for Awesome Hackers; powered by NotionAPI. Manage your Notion TO-DOs Database right from VSCode.",
+	"publisher": "AwesomeTodoMaintainer",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lostgirljourney/awesome-todo-maintainer-extension"
+	},
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.64.0"
