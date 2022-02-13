@@ -23,6 +23,17 @@ We often wanted to explore Notion APIs as well as since me and my teammates use 
 
 As mentioned, it does the **CRUD** commands as well as it lets you add **priority** and **status** making _your boring todo not so boring_.
 
+- Ctrl+Shift+P -> Quick Pick
+
+    **Commands mentioned:**
+
+    - TODO: Add/Update Notion Database
+    - TODO: Check Current Notion Database
+    - TODO: Read TO-DOs
+    - TODO: Create TO-DOs
+    - TODO: Update TO-DOs
+    - TODO: Delete TO-DOs
+
 ## How we built it
 
 - Falguni did a hell lot of JS heavily **Frontend and UI/UX logic** with which you gonna interact. 👻
