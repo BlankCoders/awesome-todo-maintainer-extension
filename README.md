@@ -4,6 +4,10 @@ Awesome TO-DO Maintainer Extension for Awesome Hackers; powered by NotionAPI. Ma
 
 [Website](https://awesometodomaintainerfor.study/) 👀
 
+## Theme
+
+- Open Innovation
+
 ## Features
 
 Do the basic CRUD operations right for your Notion Database which you're using to maintain your To-Dos with **Status** and **Priority**.
