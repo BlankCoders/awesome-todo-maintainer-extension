@@ -17,7 +17,7 @@ Do the basic CRUD operations right for your Notion Database which you're using t
 
 ## Inspiration
 
-We often wanted to explore Notion APIs as well as since me and my teammates use Notion on a daily basis, maintaining todo table while switching windows was sometimes "ughh😒" so we came up with the idea of making an extension just to stay on VSCode undistracted.
+We often wanted to explore Notion APIs as well as since me and my teammates use Notion daily, maintaining a to-do table while switching windows was sometimes "ughh😒" so we came up with the idea of making an extension just to stay on VSCode undistracted.
 
 ## What it does
 
@@ -26,13 +26,13 @@ As mentioned, it does the **CRUD** commands as well as it lets you add **priorit
 ## How we built it
 
 - Falguni did a hell lot of JS heavily **Frontend and UI/UX logic** with which you gonna interact. 👻
-- Aniruddha did a hell of lot of JS heavily (yes, again) **Backend** with which this extension gonna interact. 🤯
+- Aniruddha did a hell of a lot of JS heavily (yes, again) **Backend** with which this extension gonna interact. 🤯
   - Used **Notion SDK** to built an **API** with **Express.js** to support all the **CRUD Operations** for Notion Pages where the **Integration** is added.
 - Arkatapa did all this **documentation and poster stuff**. 😎
 
 ## Challenges we ran into
 
-Getting our PC completely frozen because of infinite loops of calling APIs to build a fully-fledged backend and frontend is definitely not an easy task. We suffered from getting ECONNECTED ERROR to the minute logic building. But all hail to **StackOverflow, YouTube and VSCode/NotionAPI docs**.
+Getting our PC completely frozen because of infinite loops of calling APIs to build a fully-fledged backend and frontend is not an easy task. We suffered from getting ECONNECTED ERROR to the minute logic building. But all hail to **StackOverflow, YouTube and VSCode/NotionAPI docs**.
 
 ## Accomplishments that we're proud of
 
@@ -44,6 +44,6 @@ Learnt a new stack and adapted it fully quickly.
 
 ## What's next for Awesome Todo Maintainer
 
-We are going to definitely grow it more and will add more features.
+We are going to grow it more and will add more features.
 
 **Enjoy!**
