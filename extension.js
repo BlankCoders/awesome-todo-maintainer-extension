@@ -1,6 +1,7 @@
 const vscode = require("vscode");
 const axios = require("axios");
-const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
+// const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
+const baseURL = "http://localhost:3000";
 let gDBID = null;
 let NOTION_KEY = ""
 const priorityList = ["Low👀", "Medium💻", "High🚀"];
@@ -59,7 +60,7 @@ const create = async (baseURL, gDBID) => {
 		await getDbId();
 	} else {
 		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`);
-
+		console.log(res)
 		let title = await vscode.window.showInputBox({
 			ignoreFocusOut: true,
 			prompt: "Add a TO-DO title.",
@@ -100,7 +101,7 @@ const create = async (baseURL, gDBID) => {
 		};
 
 		axios
-			.post(`${baseURL}/createTodo?databaseID=${gDBID}`, responseBe)
+			.post(`${baseURL}/createTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`, responseBe)
 			.then(vscode.window.showInformationMessage("To-Do added."));
 	}
 };
@@ -190,28 +191,17 @@ const update = async (baseURL, gDBID) => {
 				prompt: "Add remarks.",
 			});
 
-			const data = JSON.stringify({
+			const data = {
 				pageID: rtodo.pageID,
 				title: title,
 				priority: priority,
 				status: status,
 				remarks: remarks,
-			});
-
-			const config = {
-				method: "put",
-				url: `${baseURL}/updateTodo`,
-				headers: {
-					"Content-Type": "application/json",
-				},
-				data: data,
 			};
-
-			axios(config)
-				.then(function () {
-					vscode.window.showInformationMessage("To-Do updated.");
-				})
-				.catch(function () {
+			axios
+				.post(`${baseURL}/updateTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`, data)
+				.then(vscode.window.showInformationMessage("To-Do updated."))
+				.catch(() => {
 					vscode.window.showErrorMessage("Process failed.");
 				});
 		} else {
@@ -227,7 +217,7 @@ const deletes = async (baseURL, gDBID) => {
 		await getDbId();
 	} else {
 		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`);
-
+		console.log(NOTION_KEY);
 		const rtodos = res.data.results.map((rtodo) => {
 			return {
 				label: rtodo.title,
@@ -242,26 +232,13 @@ const deletes = async (baseURL, gDBID) => {
 		});
 
 		if (rtodo) {
-			const data = JSON.stringify({
+			const data = {
 				pageID: rtodo.pageID,
-			});
-
-			const config = {
-				method: "delete",
-				url: `${baseURL}/deleteTodo`,
-				headers: {
-					"Content-Type": "application/json",
-				},
-				data: data,
 			};
-
-			axios(config)
-				.then(function () {
-					vscode.window.showInformationMessage("To-Do deleted.");
-				})
-				.catch(function () {
-					vscode.window.showErrorMessage("Process failed.");
-				});
+			console.log(NOTION_KEY);
+			axios
+				.post(`${baseURL}/deleteTodo?NOTION_KEY=${NOTION_KEY}`, data)
+				.then(vscode.window.showInformationMessage("To-Do deleted."));
 		} else {
 			return;
 		}
