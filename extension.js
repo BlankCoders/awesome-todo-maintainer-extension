@@ -1,9 +1,24 @@
 const vscode = require("vscode");
 const axios = require("axios");
-const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
+// const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
+const baseURL = "http://localhost:3000";
 let gDBID = null;
+let NOTION_KEY = ""
 const priorityList = ["Low👀", "Medium💻", "High🚀"];
 const statusList = ["Completed🚀", "In Progress💻", "Scheduled👀"];
+
+const getKey = async () => {
+	let key = await vscode.window.showInputBox({
+		ignoreFocusOut: true,
+		prompt: `Enter your NOTION Integration Key`,
+	});
+	if (!key || key === "") {
+		return;
+	}
+	else {
+		NOTION_KEY = key;
+	}
+}
 
 const getDbId = async () => {
 	let dbID = await vscode.window.showInputBox({
@@ -19,15 +34,15 @@ const getDbId = async () => {
 	} else {
 		dbID = dbID.slice(dbID.indexOf("?") - 32, dbID.indexOf("?"));
 	}
-	if (await check(baseURL, dbID)) {
+	if (await check(baseURL, dbID, NOTION_KEY)) {
 		gDBID = dbID;
 	} else {
 		await getDbId();
 	}
 };
 
-const check = async (baseURL, dbID) => {
-	let res = await axios.get(`${baseURL}/?databaseID=${dbID}`);
+const check = async (baseURL, dbID, NOTION_KEY) => {
+	let res = await axios.get(`${baseURL}/?databaseID=${dbID}&NOTION_KEY=${NOTION_KEY}`);
 	if (res.data.success === "false" || !res.data.success) {
 		const message = "Database not found.";
 		vscode.window.showErrorMessage(message);
@@ -44,7 +59,7 @@ const create = async (baseURL, gDBID) => {
 		vscode.window.showErrorMessage(message);
 		await getDbId();
 	} else {
-		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}`);
+		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`);
 
 		let title = await vscode.window.showInputBox({
 			ignoreFocusOut: true,
@@ -97,7 +112,7 @@ const read = async (baseURL, gDBID) => {
 		vscode.window.showErrorMessage(message);
 		await getDbId();
 	} else {
-		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}`);
+		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`);
 
 		const rtodos = res.data.results.map((rtodo) => {
 			return {
@@ -126,7 +141,7 @@ const update = async (baseURL, gDBID) => {
 		vscode.window.showErrorMessage(message);
 		await getDbId();
 	} else {
-		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}`);
+		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`);
 
 		const rtodos = res.data.results.map((rtodo) => {
 			return {
@@ -212,7 +227,7 @@ const deletes = async (baseURL, gDBID) => {
 		vscode.window.showErrorMessage(message);
 		await getDbId();
 	} else {
-		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}`);
+		let res = await axios.get(`${baseURL}/readTodo?databaseID=${gDBID}&NOTION_KEY=${NOTION_KEY}`);
 
 		const rtodos = res.data.results.map((rtodo) => {
 			return {
@@ -263,7 +278,8 @@ async function activate(context) {
 		'Congratulations, your extension "awesome-todo-maintainer" is now active!'
 	);
 
-	await getDbId();
+	await getKey();
+	// await getDbId();
 
 	let configureDb = vscode.commands.registerCommand(
 		"awesome-todo-maintainer.configureDB",
@@ -309,17 +325,25 @@ async function activate(context) {
 		}
 	);
 
+	let readToken = vscode.commands.registerCommand(
+		"awesome-todo-maintainer.getToken",
+		async function () {
+			await getToken(baseURL, gDBID);
+		}
+	);
+
 	context.subscriptions.push(
 		configureDb,
 		readDb,
 		readTodo,
 		createTodo,
 		updateTodo,
-		deleteTodo
+		deleteTodo,
+		readToken
 	);
 }
 
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
 	activate,
