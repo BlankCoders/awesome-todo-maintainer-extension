@@ -1,7 +1,7 @@
 const vscode = require("vscode");
 const axios = require("axios");
-// const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
-const baseURL = "http://localhost:3000";
+const baseURL = "https://awesome-todo-maintainer.herokuapp.com";
+// const baseURL = "http://localhost:3000";
 let gDBID = null;
 let NOTION_KEY = ""
 const priorityList = ["Low👀", "Medium💻", "High🚀"];
