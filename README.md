@@ -60,4 +60,10 @@ Learnt a new stack and adapted it fully quickly.
 
 We are going to grow it more and will add more features.
 
+## Source Code
+
+[Awesome Todo Maintainer Extension](https://github.com/lostgirljourney/awesome-todo-maintainer-extension)
+
+[Awesome Todo Maintainer Backend](https://github.com/OctoplusNinja/awesome-todo-maintainer-integration)
+
 **Enjoy!**
